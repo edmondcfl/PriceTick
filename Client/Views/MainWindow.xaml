@@ -1,0 +1,87 @@
+﻿<Window x:Class="Client.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Client.Views"
+        mc:Ignorable="d"
+        Title="PriceTickClient" Height="400" Width="400"
+        FontSize="14">
+
+    <Window.Resources>
+        <local:DirectionToBrushConverter x:Key="DirectionToBrushConverter"/>
+    </Window.Resources>
+
+    <DockPanel>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock Name="tbStatusBar" Text="{Binding Client.StatusBarText}"/>
+            </StatusBarItem>
+        </StatusBar>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+                <Label>Ticker</Label>
+                <ComboBox x:Name="cbTicker" Width="100" Height="26" IsEditable="True" Text="{Binding Client.Ticker}">
+                    <ComboBoxItem Content="Stock1"/>
+                    <ComboBoxItem Content="Stock2"/>
+                </ComboBox>
+                <Button x:Name="btnSubscribe" Width="100" Margin="10,5,5,5" Command="{Binding SubscribeCommand}">Subscribe</Button>
+                <Button x:Name="btnUnsubscribe" Width="100" Margin="5" Command="{Binding UnsubscribeCommand}">Unsubscribe</Button>
+            </StackPanel>
+
+            <DataGrid x:Name="PriceTickGrid" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Client.PriceTickGridData}" 
+                        IsReadOnly="True" AutoGenerateColumns="False">
+                <DataGrid.InputBindings>
+                    <MouseBinding Gesture="LeftDoubleClick" 
+                        Command="{Binding DisplayHistoryCommand}" 
+                        CommandParameter="{Binding ElementName=PriceTickGrid, Path=SelectedItem}" />
+                </DataGrid.InputBindings>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Width="*" Header="Ticker" Binding="{Binding Ticker}">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Padding" Value="10,0,0,0" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Width="*" Header="Price" Binding="{Binding Price, StringFormat={}{0:N2}}">
+                        <DataGridTextColumn.HeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.HeaderStyle>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="TextAlignment" Value="Right"/>
+                                <Setter Property="Padding" Value="0,0,10,0" />
+                                <Setter Property="Background" Value="{Binding Direction, Converter={StaticResource DirectionToBrushConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
+                <Button x:Name="btnExit" Width="100" Margin="5" Command="{Binding ExitCommand}">Exit</Button>
+            </StackPanel>
+
+        </Grid>
+    </DockPanel>
+</Window>
